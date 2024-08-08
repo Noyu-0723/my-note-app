@@ -1,35 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { getNote } from '../services/api';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
-const NoteList = () => {
-  const [note, setNote] = useState([]);
+function NoteList() {
+  const [notes, setNotes] = useState([]);
 
   useEffect(() => {
-    const fetchNote = async () => {
-      try {
-        const data = await getNote();
-        setNote(data);
-      } catch (error) {
-        console.error('Error fetching note:', error);
-      }
-    };
-
-    fetchNote();
+    fetch('/notes')
+      .then(response => response.json())
+      .then(data => setNotes(data))
+      .catch(error => console.error('Error fetching notes:', error));
   }, []);
 
   return (
     <div>
-      <h1>Note</h1>
+      <h2>Notes</h2>
       <ul>
-        {note.map(note => (
+        {notes.map(note => (
           <li key={note.id}>
-            <h2>{note.title}</h2>
-            <p>{note.content}</p>
+            <Link to={`/notes/${note.id}`}>{note.title}</Link>
           </li>
         ))}
       </ul>
     </div>
   );
-};
+}
 
 export default NoteList;
